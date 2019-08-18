@@ -1,0 +1,24 @@
+{
+  "name": "js-workshop-O-ZONE",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AlTsbk/js-workshop-O-ZONE.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AlTsbk/js-workshop-O-ZONE/issues"
+  },
+  "homepage": "https://github.com/AlTsbk/js-workshop-O-ZONE#readme",
+  "devDependencies": {
+    "webpack": "^4.39.2",
+    "webpack-cli": "^3.3.7"
+  }
+}

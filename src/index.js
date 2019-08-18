@@ -97,11 +97,11 @@ function filters() {
             const cardPrice = card.querySelector('.card-price');
             const price = parseFloat(cardPrice.textContent);
             const title = card.querySelector('.card-title');
-            
+
             if ((minPrice.value && price < minPrice.value) ||
                 (maxPrice.value && price > maxPrice.value) ||
-                 !searchText.test(title.textContent) ||
-                 (checkBox.checked && !card.querySelector('.card-sale'))) {
+                !searchText.test(title.textContent) ||
+                (checkBox.checked && !card.querySelector('.card-sale'))) {
                 card.parentNode.style.display = 'none';
             } else {
                 card.parentNode.style.display = '';
@@ -110,13 +110,103 @@ function filters() {
         });
     }
 
-    checkBox.addEventListener('change',filter);
+    checkBox.addEventListener('change', filter);
     minPrice.addEventListener('change', filter);
     maxPrice.addEventListener('change', filter);
     searchBtn.addEventListener('click', filter);
 }
 
-checkboxToggle();
-cartToggle();
-addGoods();
-filters();
+
+// render Cards
+
+function getData() {
+    const content = document.querySelector('.goods');
+    return fetch('../db/db.json').then((res) => {
+            if (res.ok) {
+                return res.json();
+            } else {
+                throw new Error('Данные не были получены, ошибка: ' + res.status);
+
+            }
+        })
+        //.then(data => renderCards(data))
+        .catch((err) => {
+            content.innerHTML = '<div class="alert alert-warning center" role="alert" style = "margin: auto;">Упс, что-то пошло не так</div>'
+            console.log(err);
+            
+        });
+
+}
+
+function renderCards(data) {
+    const goods = document.querySelector('.goods');
+    data.goods.forEach((good) => {
+        const card = document.createElement('div');
+        card.className = 'col-12 col-md-6 col-lg-4 col-xl-3';
+        card.innerHTML = `  <div class="card" data-category = ${good.category}>
+                                ${good.sale ? '<div class="card-sale">🔥Hot Sale🔥</div>' : ''}
+                                <div class="card-img-wrapper">
+                                    <span class="card-img-top"
+                                        style="background-image: url('${good.img}')"></span>
+                                </div>
+                                <div class="card-body justify-content-between">
+                                    <div class="card-price">${good.price} ₽</div>
+                                    <h5 class="card-title">${good.title}</h5>
+                                    <button class="btn btn-primary">В корзину</button>
+                                </div>
+                            </div>`
+
+        goods.appendChild(card);
+    });
+}
+
+// catalog
+
+function renderCatalog(){
+    const cards = document.querySelectorAll('.goods .card');
+    const catalogList = document.querySelector('.catalog-list');
+    const categories = new Set();
+    const catalogBtn = document.querySelector('.catalog-button');
+    const catalog = document.querySelector('.catalog');
+
+    categories.add('Все');
+    cards.forEach((card) =>{
+        categories.add(card.dataset.category);
+    });
+
+    categories.forEach((category)=>{
+        const li = document.createElement('li');
+        li.textContent = category;
+        
+        
+        catalogList.appendChild(li);
+    });
+
+    catalogBtn.addEventListener('click',(event)=>{
+        if(catalog.style.display){
+            catalog.style.display = '';
+        }else{
+            catalog.style.display = 'block';
+        }
+        
+        if(event.target.tagName === 'LI'){
+            cards.forEach((card)=>{
+                if(card.dataset.category === event.target.textContent || event.target.textContent === 'Все'){
+                    card.style.display = '';
+                }else{
+                    card.style.display = 'none';
+                }
+            });
+        }
+    });
+
+}
+
+getData().then(data =>{
+    renderCards(data);
+    checkboxToggle();
+    cartToggle();
+    addGoods();
+    filters();
+    renderCatalog();
+});
